@@ -19,6 +19,8 @@
   "license": "MIT",
   "description": "AI-powered personal finance manager Telegram Bot with voice input support, smart expense categorization, and real-time financial insights. Built using Node.js and MongoDB.",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.1",
+    "@google-cloud/speech": "^7.0.1",
     "dotenv": "^16.5.0",
     "pg": "^8.15.6",
     "sequelize": "^6.37.7",
