@@ -1,1 +1,15 @@
-
+{
+  "welcome": "Welcome! I am your Telegram bot. Choose your language:",
+  "language_selected": "English language selected!",
+  "help": "Here are the available commands:\n/start - Start the bot\n/help - Show this help message\n/lang - Change language\n/register - Register your account",
+  "register_intro": "Please choose how you'd like to register:",
+  "email_option": "Register with Email",
+  "phone_option": "Register with Phone Number",
+  "send_email": "Please send your email address:",
+  "send_phone": "Please share your phone number using the button below:",
+  "email_received": "Thank you! Email received: %s",
+  "phone_received": "Thank you! Phone number received: %s",
+  "invalid_email": "Invalid email format. Please try again.",
+  "registration_complete": "Registration complete! You can now use the bot.",
+  "unknown_command": "I don't understand this command. Type /help for assistance."
+}
