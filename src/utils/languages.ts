@@ -1,13 +1,18 @@
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises'; // Using the promise-based version
 
-import.meta.dirname; // The current module's directory name
-import.meta.filename; // The current module's file name
+export const getLanguages = async (lang: string): Promise<any> => {
+  try {
+    const filePath = path.join(import.meta.dirname, `../db/locales/${lang}.json`);
+    const data = await fs.readFile(filePath, 'utf-8');
 
-export const getLanguages = (lang: string) => {
-  const data = fs.readFileSync(
-    path.join(import.meta.dirname, `../db/locales/${lang}.json`),
-    'utf-8'
-  );
-  return JSON.parse(data);
+    if (data === '') {
+      return { error: 'File is empty' };
+    }
+
+    return JSON.parse(data);
+  } catch (err) {
+    console.error(`Error reading language file ${lang}.json:`, err);
+    return { error: `Error reading file: ${err}` };
+  }
 };
