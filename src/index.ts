@@ -1,11 +1,18 @@
 import { bot } from './bot';
 import { config } from './config/env';
+import { testConnection } from './db/connection';
+
+// Import all commands
+import './commands/start';
+import './commands/help';
 
 // Start bot
 if (config.NODE_ENV === 'production') {
   // Production mode: use webhook
   const PORT = Number(process.env.PORT) || 3000;
   const URL = process.env.URL || 'https://your-app.herokuapp.com';
+
+  await testConnection();
 
   bot
     .launch({
@@ -23,6 +30,8 @@ if (config.NODE_ENV === 'production') {
       console.error('Error starting bot:', err);
     });
 } else {
+  await testConnection();
+
   // Development mode: use polling
   bot
     .launch()

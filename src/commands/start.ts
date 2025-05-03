@@ -44,3 +44,6 @@ export async function startCommand(ctx: Context) {
     await ctx.reply('Sorry, something went wrong. Please try again later.');
   }
 }
+
+// Register the command
+bot.command('start', startCommand);
