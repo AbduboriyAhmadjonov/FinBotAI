@@ -1,5 +1,5 @@
 import { Context } from 'telegraf';
-import { bot } from '../bot';
+import { bot } from '../bot.js';
 
 export async function helpCommand(ctx: Context) {
   try {
@@ -29,7 +29,7 @@ export async function helpCommand(ctx: Context) {
       '\n*Need more help?*\nContact us at support@finbotai.com',
     ].join('\n');
 
-    await ctx.replyWithMarkdownV2(helpText.replace(/\./g, '\\.').replace(/-/g, '\\-'));
+    await ctx.replyWithMarkdownV2(helpText.replace(/[.]/g, '\\.').replace(/[-]/g, '\\-'));
   } catch (error) {
     console.error('Error in help command:', error);
     await ctx.reply('Sorry, something went wrong. Please try again later.');

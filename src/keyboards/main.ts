@@ -1,21 +1,4 @@
-// // src/keyboards/main.js
-// // const { Markup } = require('telegraf');
 import { Markup } from 'telegraf';
-
-// export const mainKeyboard = {
-//   mainMenu: Markup.keyboard([
-//     ['📋 Buyurtma berish', '🛒 Savatcha'],
-//     ["ℹ️ Ma'lumot", '☎️ Aloqa'],
-//   ]).resize(),
-
-//   contactRequest: Markup.keyboard([
-//     [Markup.button.contactRequest('📱 Telefon raqamni yuborish')],
-//   ]).resize(),
-
-//   removeKeyboard: Markup.removeKeyboard(),
-
-//   inlineBackButton: Markup.inlineKeyboard([Markup.button.callback('◀️ Orqaga', 'back')]),
-// };
 
 export function mainKeyboard() {
   return Markup.keyboard([
@@ -25,4 +8,16 @@ export function mainKeyboard() {
   ])
     .resize()
     .selective();
+}
+
+export function contactRequestKeyboard() {
+  return Markup.keyboard([[Markup.button.contactRequest('📱 Share Phone Number')]]).resize();
+}
+
+export function removeKeyboard() {
+  return Markup.removeKeyboard();
+}
+
+export function backButton() {
+  return Markup.inlineKeyboard([Markup.button.callback('◀️ Back', 'back')]);
 }

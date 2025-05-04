@@ -1,12 +1,20 @@
-import speech from '@google-cloud/speech';
+import { SpeechClient } from '@google-cloud/speech';
+import { google } from '@google-cloud/speech/build/protos/protos';
 import fs from 'fs';
 import { config } from '../config/env';
+import User from '../db/models/user.model';
 
 // Creates a client
-const client = new speech.SpeechClient();
+const client = new SpeechClient();
 
-export async function transcribeAudio(audioPath: string): Promise<string> {
+export async function transcribeAudio(audioPath: string, userId: number): Promise<string> {
   try {
+    // Get user's language preference from database
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     // Read the audio file
     const audioContent = fs.readFileSync(audioPath);
 
@@ -16,16 +24,19 @@ export async function transcribeAudio(audioPath: string): Promise<string> {
         content: audioContent.toString('base64'),
       },
       config: {
-        encoding: 'OGG_OPUS',
+        encoding: google.cloud.speech.v1.RecognitionConfig.AudioEncoding.OGG_OPUS,
         sampleRateHertz: 16000,
-        languageCode: 'en-US',
+        languageCode: `${user.language}-${user.language.toUpperCase()}`,
       },
     };
 
     // Detects speech in the audio file
     const [response] = await client.recognize(request);
     const transcription =
-      response.results?.map((result) => result.alternatives?.[0].transcript).join('\n') || '';
+      response.results
+        ?.map((result) => result.alternatives?.[0]?.transcript)
+        .filter(Boolean)
+        .join('\n') || '';
 
     return transcription;
   } catch (error) {

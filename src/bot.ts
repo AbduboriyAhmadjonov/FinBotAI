@@ -1,11 +1,10 @@
-import { Telegraf, Context, session } from 'telegraf';
-import { config } from './config/env';
-import { getLanguages } from './utils/languages';
-import { Message } from 'telegraf/typings/core/types/typegram';
-import { SceneContext, SceneSession, SceneSessionData } from 'telegraf/scenes';
+import { Telegraf, Context } from 'telegraf';
+import { Message, Update } from '@telegraf/types';
+import { config } from './config/env.js';
+import { getLanguages } from './utils/languages.js';
 
-// Define session interface for regular data
-interface BotSessionData {
+// Define custom session interface
+interface SessionData {
   language?: string;
   registrationStep?: 'email' | 'phone' | 'password' | 'complete';
   userData?: {
@@ -15,50 +14,47 @@ interface BotSessionData {
   };
 }
 
-// Extend the default session type with our BotSessionData
-interface BotSession extends BotSessionData {}
-
-// Extend the context type to include session and scene
-interface BotContext extends Context {
-  session: BotSession;
-  scene: SceneContext<BotContext>; // Corrected SceneContext type
+// Define custom context interface
+interface MyContext extends Context {
+  session: SessionData;
 }
 
-export const bot = new Telegraf<BotContext>(config.TELEGRAM_BOT_TOKEN); // Specify BotContext for Telegraf
+// Create bot instance with custom context
+export const bot = new Telegraf<MyContext>(config.TELEGRAM_BOT_TOKEN);
 
-// Middleware to initialize session
-bot.use(session());
+// Initialize session middleware
+bot.use(async (ctx, next) => {
+  if (!ctx.session) {
+    ctx.session = {};
+  }
+  return next();
+});
 
 // Command handlers
-bot.start(async (ctx) => {
-  // Reset session on /start
+bot.command('start', async (ctx) => {
+  // Reset session
   ctx.session = {};
-
-  // Show language selection keyboard
   await showLanguageSelection(ctx);
 });
 
 // Handle errors
 bot.catch((err, ctx) => {
   console.error(`Error for ${ctx.updateType}:`, err);
-  ctx.reply('Please try later').catch(() => {});
+  ctx.reply('An error occurred. Please try again later.').catch(console.error);
 });
 
 // Language selection handler
-async function showLanguageSelection(ctx: BotContext) {
+async function showLanguageSelection(ctx: MyContext) {
   try {
-    const texts = await getLanguages('en'); // Add await here to properly resolve the Promise
+    const texts = await getLanguages('en');
 
-    if (texts.error) {
+    if ('error' in texts) {
       console.error('Error loading languages:', texts.error);
       await ctx.reply('An error occurred. Please try again later.');
       return;
     }
 
-    console.log('Language selection:', texts);
-
     await ctx.reply(texts.welcome || 'Select your language:', {
-      // Using welcome instead of selectLanguage
       reply_markup: {
         inline_keyboard: [
           [

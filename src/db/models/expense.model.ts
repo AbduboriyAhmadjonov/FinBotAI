@@ -1,6 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../connection';
-import User from './user.model';
+import { sequelize } from '../connection.js';
+import User from './user.model.js';
 
 interface ExpenseAttributes {
   id: number;
@@ -79,6 +79,7 @@ Expense.init(
   }
 );
 
+// Define associations
 Expense.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Expense, { foreignKey: 'userId' });
 

@@ -1,5 +1,5 @@
-import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../connection';
+import { Model, DataTypes, Sequelize, Optional } from 'sequelize';
+import { sequelize } from '../connection.js';
 
 interface UserAttributes {
   id: number;
@@ -8,19 +8,27 @@ interface UserAttributes {
   lastName?: string;
   username?: string;
   language: string;
+  lastActive?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
-class User extends Model<UserAttributes> implements UserAttributes {
+// These attributes will be optional during creation
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+
+class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
   public telegramId!: number;
   public firstName!: string;
   public lastName?: string;
   public username?: string;
   public language!: string;
+  public lastActive?: Date;
   public createdAt!: Date;
   public updatedAt!: Date;
+
+  // Add this to make the sequelize property available
+  static sequelize: Sequelize;
 }
 
 User.init(
@@ -51,6 +59,10 @@ User.init(
       type: DataTypes.STRING(5),
       allowNull: false,
       defaultValue: 'en',
+    },
+    lastActive: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
     createdAt: {
       type: DataTypes.DATE,

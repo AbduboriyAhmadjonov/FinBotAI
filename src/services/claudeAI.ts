@@ -1,5 +1,5 @@
 import Client from '@anthropic-ai/sdk';
-import { config } from '../config/env';
+import { config } from '../config/env.js';
 
 const claudeClient = new Client({
   apiKey: config.CLAUDE_API_KEY,
@@ -60,7 +60,17 @@ export async function getFinancialInsights(
       ],
     });
 
-    return response.content[0].text;
+    // Access the response content safely
+    if (!response.content || response.content.length === 0) {
+      throw new Error('No response content from Claude AI');
+    }
+
+    const firstContent = response.content[0];
+    if (!('text' in firstContent)) {
+      throw new Error('Unexpected response format from Claude AI');
+    }
+
+    return firstContent.text;
   } catch (error) {
     console.error('Error getting financial insights from Claude:', error);
     return "I couldn't generate personalized insights at the moment. Please try again later.";
